@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  db:
+    container_name: trufladb
+    image: postgres:11-alpine
+    restart: unless-stopped
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - rails-network
+    ports:
+      - 5432:5432
+    env_file:
+      - ./docker/.env
+
+  web:
+    container_name: trufla_web
+    build:
+      context: .
+      dockerfile: ./docker/rails/Dockerfile
+    depends_on:
+      - db
+    volumes:
+      - .:/usr/src/app
+    networks:
+      - rails-network
+    ports:
+      - 3000:3000
+    env_file:
+      - ./docker/.env
+    command: ["wait-for-it", "db:5432", "--", "rails", "server", "--binding", "0.0.0.0"]
+
+networks:
+  rails-network:
+
+volumes:
+  db-data:

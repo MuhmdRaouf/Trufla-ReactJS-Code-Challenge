@@ -1,0 +1,15 @@
+#!/bin/sh
+set -e
+
+echo "Starting Rails server..."
+
+# Remove a potentially pre-existing server.pid for Rails.
+if [[ -f $APP_PATH/tmp/pids/server.pid ]]; then
+  rm -f $APP_PATH/tmp/pids/server.pid
+fi
+
+# Check yarn files integrity
+yarn install --check-files
+
+# Then exec the container's main process (what's set as CMD in the Dockerfile).
+exec "$@"
