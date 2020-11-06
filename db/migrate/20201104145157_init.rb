@@ -18,7 +18,7 @@ class Init < ActiveRecord::Migration[6.0]
 
     create_table :promotions do |t|
       t.string   :code, unique: true
-      t.boolean  :active, default: false
+      t.boolean  :is_active, default: true
       t.integer  :discount
       t.boolean  :is_deleted, default: false
 

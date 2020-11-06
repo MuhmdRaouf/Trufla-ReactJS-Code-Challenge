@@ -43,7 +43,7 @@ ActiveRecord::Schema.define(version: 2020_11_04_145157) do
 
   create_table "promotions", force: :cascade do |t|
     t.string "code"
-    t.boolean "active", default: false
+    t.boolean "is_active", default: true
     t.integer "discount"
     t.boolean "is_deleted", default: false
     t.datetime "created_at", precision: 6, null: false
