@@ -1,4 +1,5 @@
 import React from "react";
+import Grid from "@material-ui/core/Grid";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import TextField from "@material-ui/core/TextField";
@@ -8,8 +9,11 @@ import FormControl from "@material-ui/core/FormControl";
 
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    flexGrow: 1,
+  },
   formControl: {
-    margin: theme.spacing(1),
+    margin: theme.spacing(2),
     minWidth: 120,
   }
 }));
@@ -21,22 +25,22 @@ export const SearchBar = ({ departments, promotions, selectedDepartment, setSele
   };
 
   return (
-    <div className="offset-2 col-8 d-inline-flex justify-content-around">
+    <Grid>
       <FormControl className={classes.formControl}>
-        <InputLabel id="demo-simple-select-label">Department</InputLabel>
+        <InputLabel id="department-select-label">Departments</InputLabel>
         <Select
           id="department-select"
           value={selectedDepartment}
           onChange={(event) => { handleChange(event, setSelectedDepartment) }}
         >
-          <MenuItem value="">All Department</MenuItem>
+          <MenuItem value="">All Departments</MenuItem>
           {
             departments.map((department) => <MenuItem key={department.id} value={department.id}>{ department.name }</MenuItem>)
           }
         </Select>
       </FormControl>
       <FormControl className={classes.formControl}>
-        <InputLabel id="demo-simple-select-label">Promotions</InputLabel>
+        <InputLabel id="promotion-select-label">Promotions</InputLabel>
         <Select
           id="promotions-select"
           value={selectedPromotions}
@@ -56,6 +60,6 @@ export const SearchBar = ({ departments, promotions, selectedDepartment, setSele
           onChange={(event) => { handleChange(event, setProductTextSearch) }}
         />
       </FormControl>
-    </div>
+    </Grid>
   )
 }

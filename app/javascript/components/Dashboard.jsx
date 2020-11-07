@@ -1,16 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { DataGrid } from '@material-ui/data-grid';
+import React, {useEffect, useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
+import Pagination from '@material-ui/lab/Pagination';
 
+import { Card } from "./Card";
 import { SearchBar } from "./SearchBar";
-import { fetchPromotionsList } from "../apis/promotions"
-import { fetchDashboardDataset } from "../apis/dashboard"
-import { fetchDepartmentsList } from "../apis/departments"
+import { fetchPromotionsList } from "../apis/promotions";
+import { fetchDashboardDataset } from "../apis/dashboard";
+import { fetchDepartmentsList } from "../apis/departments";
 
-const useStyles = makeStyles(() => ({
-  table: {
-    height: 400,
-    width: '100%'
+const useStyles = makeStyles((theme) => ({
+  root: {
+    flexGrow: 1,
+  },
+  paginator: {
+    marginTop: theme.spacing(2),
   }
 }));
 
@@ -23,26 +27,24 @@ export const Dashboard = () => {
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [selectedPromotions, setSelectedPromotions] = useState("");
   const [productTextSearch, setProductTextSearch] = useState("");
-  const COLUMNS = [
-    { field: 'id', headerName: 'ID', width: 75 },
-    { field: 'department_name', headerName: 'Department', width: 150 },
-    { field: 'name', headerName: 'Name', width: 150 },
-    { field: 'price', headerName: 'Price', width: 150 },
-    { field: 'promotion', headerName: 'Promotion', width: 150 },
-    { field: 'discount', headerName: 'Discount', width: 150 },
-    { field: 'is_active', headerName: 'Active', width: 150 }
-  ];
+  const [page, setPage] = useState(1);
+  const [totalPageCount, setTotalPageCount] = useState(0);
 
   const searchFilter = (element) => (
     productTextSearch ? element.name.toLowerCase().includes(productTextSearch.toLowerCase()) : true
   )
 
+  const handleChangePage = (element, value) => (
+    setPage(value)
+  )
+
   useEffect(() => {
-    fetchDashboardDataset(selectedDepartment, selectedPromotions)
+    fetchDashboardDataset(selectedDepartment, selectedPromotions, page)
       .then((response) => {
-        setDataset(response.data);
+        setDataset(response.data.dashboard_products);
+        setTotalPageCount(response.data.total_pages_count);
       }).catch((error) => {})
-  }, [selectedDepartment, selectedPromotions])
+  }, [selectedDepartment, selectedPromotions, page])
 
   useEffect(() => {
     fetchDepartmentsList()
@@ -59,24 +61,40 @@ export const Dashboard = () => {
   }, [])
 
   return (
-    <div className="container">
-     <div className="row">
-       <SearchBar
-         departments={departments}
-         promotions={promotions}
-         selectedDepartment={selectedDepartment}
-         setSelectedDepartment={setSelectedDepartment}
-         selectedPromotions={selectedPromotions}
-         setSelectedPromotions={setSelectedPromotions}
-         productTextSearch={productTextSearch}
-         setProductTextSearch={setProductTextSearch}
-       />
-       <div className="offset-2 col-8">
-         <div className={classes.table}>
-           <DataGrid rows={dataset.filter(searchFilter)} columns={COLUMNS} pageSize={5} />
-         </div>
-       </div>
-     </div>
-    </div>
-  )
-};
+    <Grid container justify="center" className={classes.root} spacing={2}>
+      <Grid item xs={12}>
+        <Grid container justify="center" spacing={2}>
+          <SearchBar
+            departments={departments}
+            promotions={promotions}
+            selectedDepartment={selectedDepartment}
+            setSelectedDepartment={setSelectedDepartment}
+            selectedPromotions={selectedPromotions}
+            setSelectedPromotions={setSelectedPromotions}
+            productTextSearch={productTextSearch}
+            setProductTextSearch={setProductTextSearch}
+          />
+        </Grid>
+      </Grid>
+      <Grid item xs={12}>
+        <Grid container justify="center" spacing={6}>
+          {
+            dataset.filter(searchFilter).map((element) => (
+              <Card key={element.id} card_data={ element } />
+            ))
+          }
+        </Grid>
+      </Grid>
+      <Grid item xs={12}>
+        <Grid container justify="center" className={classes.paginator} spacing={2}>
+          <Pagination
+            count={totalPageCount}
+            color="primary"
+            page={page}
+            onChange={handleChangePage}
+          />
+        </Grid>
+      </Grid>
+    </Grid>
+  );
+}

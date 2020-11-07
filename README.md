@@ -9,6 +9,14 @@ Dependencies:
 * GNU Make
 
 Instructions:
+ - `make build` build application images.
+ - `make up` might take couple minutes due yarn files integrity check. 
+ - `make rake db:create` to create both development and test database.
+ - `make migrate` to run the app migration.
+ - `make seed` if you needed seed data.
+ - `make rspec` to run run tests suite.
+
+Instructions:
 
 * make < commands > [additions commands]
 
